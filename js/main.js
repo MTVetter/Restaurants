@@ -40,4 +40,24 @@ require([
         mode: "floating"
     });
     view.ui.add(directionExpand, "top-right");
+
+    //Add a help expand for the user
+    const infoContent = document.createElement("div");
+    infoContent.style.padding = "5px";
+    infoContent.style.backgroundColor = "black";
+    infoContent.style.width = "250px";
+    infoContent.innerHTML = [
+        "<div id='title' class='esri-widget'>",
+        "This application is to show the different restaurants around Houston that we want to try.",
+        "<br><br>The application has a widget for the user to get directions to the different restaurants.",
+        "<br><br>The blue dots represent restaurants we've already eaten at while the reds dots represents restaurants we want to eat at."
+    ].join(" ");
+    const infoExpand = new Expand({
+        expandIconClass: "esri-icon-chat",
+        expandTooltip: "Application Help",
+        view: view,
+        content: infoContent,
+        expanded: view.widthBreakpoint !== "xsmall"
+    });
+    view.ui.add(infoExpand, "top-left");
 })
