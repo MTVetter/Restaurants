@@ -1,0 +1,36 @@
+html, body, #viewDiv{
+    height: 100vh;
+    margin: 0;
+}
+#infoDiv{
+    padding: 8px;
+}
+.visible{
+    display: block !important;
+}
+.loading{
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    z-index: 1;
+    color: white;
+    display: none;
+    padding: 8px;
+    border: 16px solid #f3f3f3;
+    border-radius: 50%;
+    border-top: 16px solid #ffd662;
+    border-bottom: 16px solid #ffd662;
+    width: 100px;
+    height: 100px;
+    margin: -75px 0 0 -75px;
+    -webkit-animation: spin 1s linear infinite;
+    animation: spin 1s linear infinite;
+}
+@-webkit-keyframes spin {
+    0% { -webkit-transform: rotate(0deg); }
+    100% { -webkit-transform: rotate(360deg); }
+} 
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
