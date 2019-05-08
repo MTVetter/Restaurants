@@ -54,8 +54,16 @@ require([
   var restaurantDirection = {
     title: "Directions to Restaurant",
     id: "directions-to",
-    image:
-      "https://cdn1.iconfinder.com/data/icons/maps-and-navigation-11/24/compass-map-bearing-navigation-maps-gps-heading-directions-512.png"
+    className: "esri-icon-tracking"
+    // image:
+    //   "https://cdn1.iconfinder.com/data/icons/maps-and-navigation-11/24/compass-map-bearing-navigation-maps-gps-heading-directions-512.png"
+  };
+
+  //Action item to display the menu
+  var restaurantMenu = {
+    title: "Display the Menu",
+    id: "menu-display",
+    className: "esri-icon-review"
   };
 
   //Create the needed information for the route task
@@ -131,11 +139,11 @@ require([
         type: "text",
         text:
           "<b>{Name}</b> is a <b>{Type}</b> restaurant.<br/>{expression/main}<br/><br/>For more information about the restaurant:<br/>" +
-          "<a href='{Website}' target='_blank'>Click for the website</a><br/><a href='{expression/menu}' target='_blank'>Click for the menu</a>"
+          "<a href='{Website}' target='_blank'>Click for the website</a>"
       }
     ],
     expressionInfos: arcadeExpressionInfos,
-    actions: [restaurantDirection]
+    actions: [restaurantDirection, restaurantMenu]
   };
 
   //Create unique value renderer for the points
@@ -276,9 +284,20 @@ require([
     }
   }
 
+  //Create the function to display the menu
+  function menuDisplay() {
+    var attributes = view.popup.selectedFeature.attributes;
+    var info = attributes.Menu;
+    if (info) {
+      window.open(info.trim());
+    }
+  }
+
   view.popup.on("trigger-action", function(event) {
     if (event.action.id === "directions-to") {
       directionsTo();
+    } else if (event.action.id === "menu-display") {
+      menuDisplay();
     }
   });
 });
