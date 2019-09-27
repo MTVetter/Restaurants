@@ -98,183 +98,23 @@ require([
     width: 2
   };
 
-  //Create Arcade Expressions
-  var arcadeExpressionInfos = [
-    {
-      name: "main",
-      title: "Restaurant Info",
-      expression: `if ($feature.Type == "Burgers"){
-                "This restaurant serves varies different types of burgers."
-            } else if ($feature.Type == "Wings"){
-                "This restaurant is known for their wings, but also has different types of burgers and sandwiches."
-            } else if ($feature.Type == "Poutine"){
-                "This restaurant is bringing a Candian tradition to the South."
-            } else if ($feature.Type == "BBQ"){
-                "This one of many restaurants in Houston that serves BBQ."
-            } else if ($feature.Type == "Italian"){
-                "This unique restaurant combines a sports bar with an Italian restaurant."
-            } else if ($feature.Type == "Chinese"){
-                "This Chinese restaurant is extremely unique because it is a combo Chinese/Pizza restaurant."
-            } else if ($feature.Type == "Pizza"){
-                "This restaurant serves pizza and has a buffet every day from 11-2."
-            } else if ($feature.Type == "Seafood"){
-                "This is a popular chain restaurant that people have recommended."
-            } else if ($feature.Type == "Mediterranean"){
-                "We've been to this buffet. This restaurant has really good gyro meat and desserts."
-            } else if ($feature.Type == "Mexican"){
-                "We've been to this restaurant. 2 tacos are enough to be full."
-            }`
-    },
-    {
-      name: "rating",
-      title: "Restaurant Rating",
-      expression: `if (IsEmpty($feature.Rating)){
-                "We haven't eaten at this restaurant yet"
-            } else{
-                $feature.Rating + " out of 5 stars"
-            }`
-    },
-    {
-      name: "visited",
-      title: "Have we visited?",
-      expression: `if ($feature.visited == 'Y'){
-        "Click on an attachment to see pictures of the food we ordered."
-      }`
-    }
-  ];
-
   //Create the popup templates
-  var template = {
-    title: "{Name}",
-    content: [
-      {
-        type: "text",
-        text:
-          "<b>{Name}</b> is a <b>{Type}</b> restaurant.<br/><br/>{expression/main}<br/><br/>{expression/rating}<br/><br/>" +
-          "For more information about the restaurant:<br/><a href='{Website}' target='_blank'>Click for the website</a><br/><br/>{expression/visited}"
-      },{
-        type: "attachments"
-      }
-    ],
-    expressionInfos: arcadeExpressionInfos,
-    actions: [restaurantDirection, restaurantMenu]
-  };
-
   var topRestaurantTemplate = {
+    expressionInfos: [{
+      name: "ranking",
+      title: "Ranking",
+      expression: "if ($feature.Ranking == 'NA'){'restaurant that has not been ranked by Eric Sandler, but we want to try.'}else{'restaurant ranked '+$feature.Ranking+ ' by Eric Sandler.'}"
+    }],
     title: "{Name}",
     content: [
       {
         type: "text",
         text: 
-          "<b>{Name}</b> is a <b>{Type}</b> restaurant ranked at <b>{Ranking}</b> by Eric Sandler.<br/><br/>{Name} is located at <b>{Address}, {City}, TX {ZIP}</b>."+
+          "<b>{Name}</b> is a <b>{Type}</b> {expression/ranking}<br/><br/>{Name} is located at <b>{Address}, {City}, TX {ZIP}</b>."+
           " {Name} is in the <b>{Price}</b> price range."
       }
     ],
     actions: [restaurantDirection]
-  };
-
-  //Create unique value renderer for the points
-  var visited = {
-      type: "simple-marker",
-      outline: {
-          width: 1.5,
-          color: [0,112,255,1]
-      },
-      color: [0,112,255,0],
-      size: 6
-  };
-
-  var notVisited = {
-      type: "simple-marker",
-      outline: {
-          width: 1,
-          color: [255,0,0,1]
-      },
-      color: [255,0,0,1],
-      size: 6
-  };
-
-  var restaurantRenderer = {
-      type: "unique-value",
-      field: "Visited",
-      uniqueValueInfos: [
-          {
-              value: "Y",
-              symbol: visited,
-              label: "Yes"
-          },{
-              value: "N",
-              symbol: notVisited,
-              label: "No"
-          }
-      ]
-  };
-
-  var top30 = {
-    type: "simple-marker",
-    outline: {
-      width: 1,
-      color: [255,115,223,1]
-    },
-    color: [255,115,223,1],
-    size: 6
-  };
-
-  var top60 = {
-    type: "simple-marker",
-    outline: {
-      width: 1,
-      color: [197,0,255,1]
-    },
-    color: [197,0,255,1],
-    size: 6
-  };
-
-  var top90 = {
-    type: "simple-marker",
-    outline: {
-      width: 1,
-      color: [76,230,0,1]
-    },
-    color: [76,230,0,1],
-    size: 6
-  };
-
-  var top100 = {
-    type: "simple-marker",
-    outline: {
-      width: 1,
-      color: [255,170,0,1]
-    },
-    color: [255,170,0,1],
-    size: 6
-  };
-
-  var topRestaurantRenderer = {
-    type: "unique-value",
-    field: "GroupRanking",
-    legendOptions: {
-      title: "Ranking Groups"
-    },
-    uniqueValueInfos: [
-      {
-        value: "0-30",
-        symbol: top30,
-        label: "Ranked 0 - 30"
-      },{
-        value: "31-60",
-        symbol: top60,
-        label: "Ranked 31 - 60"
-      },{
-        value: "61-90",
-        symbol: top90,
-        label: "Ranked 61 - 90"
-      },{
-        value: "91+",
-        symbol: top100,
-        label: "Ranked 91 - 100"
-      }
-    ]
   };
 
   //Houston's Top 100 restaurants based on Eric Sandler broken out by his levels
@@ -282,21 +122,9 @@ require([
     url: "https://services7.arcgis.com/CNA1UqWfbopIY83R/ArcGIS/rest/services/Top100_Restaurants/FeatureServer/0",
     outFields: ["*"],
     popupTemplate: topRestaurantTemplate,
-    renderer: topRestaurantRenderer,
     title: "Top 100 Restaurants"
   });
   map.add(topRestaurants);
-
-  //Visited or Want to visit restaurants url
-  var featureLayer = new FeatureLayer({
-    url:
-      "https://services7.arcgis.com/CNA1UqWfbopIY83R/arcgis/rest/services/restaurants/FeatureServer/0",
-    outFields: ["*"],
-    popupTemplate: template,
-    renderer: restaurantRenderer,
-    title: "Restaurants to Visit (Outside Top 100)"
-  });
-  map.add(featureLayer);
   map.add(routeLayer);
 
   //Add a Home button
@@ -452,7 +280,7 @@ require([
     var selectedPrice = event.target.getAttribute("data-price");
     restaurantLayerView.effect ={
       filter: {
-        where: "Price LIKE '" + selectedPrice + "'"
+        where: "Price IN('" + selectedPrice + "')"
       },
       excludedEffect: "grayscale(100%) opacity(30%)"
     };
